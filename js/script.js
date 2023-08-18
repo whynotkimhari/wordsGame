@@ -117,6 +117,9 @@ function run(dictionary) {
         // If the input word is exist in the dictionary
         if (dictionary[inputWord[0]] === undefined) {
             answerEl.innerHTML = `<h1><span class="word">${inputWord}</span> does not exist in this dictionary</h1>`;
+            if(lastGiven) {
+                answerEl.innerHTML += `<h1>Try others to defeat <span class="word">${lastGiven}</span></h1>`;
+            }
             lives--;
             playAudio(wrongAudio);
         }
