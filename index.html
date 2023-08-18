@@ -3,18 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>Words Game</title>
 </head>
 <body>
-    <select name="" id="select">
-        <option value="0">choose</option>
-        <option value="words-3000.json">oxford 3000 words</option>
-        <option value="words-5000.json">oxford 5000 words</option>
-    </select>
+    <div class="title-sec">
+        <span>W</span>
+        <span>O</span>
+        <span>R</span>
+        <span>D</span>
+        <span>S</span>
+        <span>G</span>
+        <span>A</span>
+        <span>M</span>
+        <span>E</span>
+    </div>
+    <div class="counter">
+        <span id="lives"></span>
+        <span id="points"></span>
+        <span id="help" title="How to play?"><i class='bx bx-question-mark'></i></span>
+    </div>
     <div class="container">
         <div class="input-sec">
-            <input type="text" id="input" placeholder="You go first">
+            <input type="text" id="input" placeholder="Your turn">
         </div>
         <div class="answer-sec" id="answer"></div>
     </div>

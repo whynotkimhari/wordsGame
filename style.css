@@ -1,7 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
 .input-sec {
     display: flex;
-    margin: 0 auto;
+    margin: 8rem auto 0;
     justify-content: center;
     align-items: center;
-    border: 1px solid black;
+}
+
+body {
+    background-color: azure;
+}
+
+.title-sec {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 100px;
+}
+
+.title-sec span {
+    margin: 0 10px;
+    transition: 0.5s;
+}
+
+.input-sec input {
+    border-radius: 20px;
+    padding: 10px;
+    width: 50%;
+    height: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    background-color: azure;
+}
+
+.word {
+    color: red;
+}
+
+#answer {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.counter {
+    text-align: center;
+    margin: 2rem auto 0;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.counter span {
+    margin: 0 auto;
+}
+
+.swal-text {
+    font-size: 20px;
+}
+
+@media only screen and (max-width: 1100px) {
+    .title-sec span {
+        margin: 0px;
+    }
+
+    .title-sec {
+        font-size: 90px;
+    }
+}
+
+
+@media only screen and (max-width: 800px) {
+    .title-sec span {
+        margin: 0px;
+    }
+
+    .title-sec {
+        font-size: 80px;
+    }
+}
+
+
+@media only screen and (max-width: 600px) {
+    .title-sec span {
+        margin: 0px;
+    }
+
+    .title-sec {
+        font-size: 45px;
+    }
+}
+
+
+@media only screen and (max-width: 400px) {
+    .title-sec span {
+        margin: 0px;
+    }
+
+    .title-sec {
+        font-size: 35px;
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    .title-sec span {
+        margin: 0px;
+    }
+
+    .title-sec {
+        font-size: 30px;
+    }
 }
