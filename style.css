@@ -35,6 +35,11 @@ body {
     font-size: 20px;
     font-weight: 700;
     background-color: azure;
+    box-shadow: 3px 3px;
+}
+
+.input-sec input:focus {
+    outline: none;
 }
 
 .word {
@@ -60,6 +65,10 @@ body {
 
 .swal-text {
     font-size: 20px;
+}
+
+#help, #rank {
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 1100px) {

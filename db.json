@@ -1,0 +1,15 @@
+{
+    "rankings": [
+      { "id": 1, "name": "Joe Mama", "content": 1000 },
+      { "id": 2, "name": "Dickies Son", "content": 900 },
+      { "id": 3, "name": "Rick Roll", "content": 234 },
+      { "id": 4, "name": "Bob", "content": 4564 },
+      { "id": 5, "name": "Johnny Mice", "content": 678 },
+      { "id": 6, "name": "Kiin", "content": 976800 },
+      { "id": 7, "name": "Zapster", "content": 67843 },
+      { "id": 8, "name": "Benjizk", "content": 243 },
+      { "id": 9, "name": "Dunjar", "content": 23 },
+      { "id": 10, "name": "Klez", "content": 1 }
+    ]
+  }
+  

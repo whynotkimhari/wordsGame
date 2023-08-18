@@ -3,6 +3,8 @@ const answerEl = document.querySelector('#answer');
 const livesEl = document.querySelector('#lives');
 const pointsEl = document.querySelector('#points');
 const helpEl = document.querySelector('#help');
+const rankEl = document.querySelector('#rank');
+
 const passAudio = new Audio('pass.mp3');
 const wrongAudio = new Audio('wrong.mp3');
 const victoryAudio = new Audio('victory.mp3');
@@ -10,7 +12,30 @@ const victoryAudio = new Audio('victory.mp3');
 render();
 handleFetchLib(run);
 
-helpEl.addEventListener('click', (e) => {
+rankEl.addEventListener('click', () => {
+    fetch('db.json')
+        .then(res => res.json())
+        .then((array) => {
+            // console.log(typeof array, array)
+            var resultText = array.rankings.map((val) => {
+                return {
+                    name: val.name,
+                    point: val.content
+                }
+            })
+            .sort((a, b) => b.point - a.point)
+            .reduce((str, element) => {
+                return str + `${element.name}: ${element.point} pts\n`;
+            }, "")
+
+            swal({
+                title: "Fake Ranking",
+                text: resultText
+            })
+        })
+})
+
+helpEl.addEventListener('click', () => {
     swal({
         title: "How to play?",
         text: "- Concatenating words like: \n egg-gas-socket-temples-sun-... \n\n - You will have 10 lives and every 10 correct answers, you will get 1 extra more live \n\n - If your lives lesser than 1, you will lose the game \n\n - I may lose the game, but It is very hard for you to defeat me. Try your best!",
