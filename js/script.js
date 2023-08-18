@@ -5,15 +5,15 @@ const pointsEl = document.querySelector('#points');
 const helpEl = document.querySelector('#help');
 const rankEl = document.querySelector('#rank');
 
-const passAudio = new Audio('pass.mp3');
-const wrongAudio = new Audio('wrong.mp3');
-const victoryAudio = new Audio('victory.mp3');
+const passAudio = new Audio('mp3/pass.mp3');
+const wrongAudio = new Audio('mp3/wrong.mp3');
+const victoryAudio = new Audio('mp3/victory.mp3');
 
 render();
 handleFetchLib(run);
 
 rankEl.addEventListener('click', () => {
-    fetch('db.json')
+    fetch('json/db.json')
         .then(res => res.json())
         .then((array) => {
             // console.log(typeof array, array)
@@ -46,7 +46,7 @@ helpEl.addEventListener('click', () => {
 
 /// FETCH JSON LIB
 async function handleFetchLib(callBack) {
-    fetch('words.json')
+    fetch('json/words.json')
         .then(res => res.json())
         .then(callBack)
 }
