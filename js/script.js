@@ -110,7 +110,7 @@ function run(dictionary) {
     pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
 
     inputEl.addEventListener('change', (e) => {
-        var inputWord = e.target.value.toLowerCase();
+        var inputWord = e.target.value.toLowerCase().trim();
         var lastPos = inputWord.length - 1;
         e.target.value = "";
 
