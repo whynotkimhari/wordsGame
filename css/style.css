@@ -1,125 +1,138 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins');
+@import url("https://fonts.googleapis.com/css2?family=Poppins");
 
 * {
-    font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .input-sec {
-    display: flex;
-    margin: 8rem auto 0;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  margin: 8rem auto 0;
+  justify-content: center;
+  align-items: center;
 }
 
 body {
-    background-color: azure;
+  background-color: azure;
 }
 
 .title-sec {
-    text-align: center;
-    margin-top: 3rem;
-    font-size: 100px;
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 100px;
 }
 
 .title-sec span {
-    margin: 0 10px;
-    transition: 0.5s;
+  margin: 0 10px;
+  transition: 0.5s;
 }
 
 .input-sec input {
-    border-radius: 20px;
-    padding: 10px;
-    width: 50%;
-    height: 20px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 700;
-    background-color: azure;
-    box-shadow: 3px 3px;
+  border-radius: 20px;
+  padding: 10px;
+  width: 50%;
+  height: 20px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  background-color: azure;
+  box-shadow: 3px 3px;
 }
 
 .input-sec input:focus {
-    outline: none;
+  outline: none;
 }
 
 .word {
-    color: red;
+  color: red;
 }
 
 #answer {
-    text-align: center;
-    margin-top: 2rem;
+  text-align: center;
+  margin-top: 2rem;
 }
 
 .counter {
-    text-align: center;
-    margin: 2rem auto 0;
-    font-size: 30px;
-    display: flex;
-    justify-content: center;
+  text-align: center;
+  margin: 2rem auto 0;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
 }
 
 .counter span {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 .swal-text {
-    font-size: 20px;
+  font-size: 20px;
 }
 
-#help, #rank {
-    cursor: pointer;
+#help,
+#rank {
+  cursor: pointer;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer h4 a {
+  text-decoration: none;
+  color: black;
 }
 
 @media only screen and (max-width: 1100px) {
-    .title-sec span {
-        margin: 0px;
-    }
+  .title-sec span {
+    margin: 0px;
+  }
 
-    .title-sec {
-        font-size: 90px;
-    }
+  .title-sec {
+    font-size: 90px;
+  }
 }
-
 
 @media only screen and (max-width: 800px) {
-    .title-sec span {
-        margin: 0px;
-    }
+  .title-sec span {
+    margin: 0px;
+  }
 
-    .title-sec {
-        font-size: 80px;
-    }
+  .title-sec {
+    font-size: 80px;
+  }
 }
-
 
 @media only screen and (max-width: 600px) {
-    .title-sec span {
-        margin: 0px;
-    }
+  .title-sec span {
+    margin: 0px;
+  }
 
-    .title-sec {
-        font-size: 45px;
-    }
+  .title-sec {
+    font-size: 45px;
+  }
 }
 
-
 @media only screen and (max-width: 400px) {
-    .title-sec span {
-        margin: 0px;
-    }
+  .title-sec span {
+    margin: 0px;
+  }
 
-    .title-sec {
-        font-size: 35px;
-    }
+  .title-sec {
+    font-size: 35px;
+  }
 }
 
 @media only screen and (max-width: 300px) {
-    .title-sec span {
-        margin: 0px;
-    }
+  .title-sec span {
+    margin: 0px;
+  }
 
-    .title-sec {
-        font-size: 30px;
-    }
+  .title-sec {
+    font-size: 30px;
+  }
 }
