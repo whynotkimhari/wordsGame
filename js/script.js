@@ -195,7 +195,14 @@ rankEl.addEventListener('click', () => {
 helpEl.addEventListener('click', () => {
     swal({
         title: "How to play?",
-        text: "- Concatenating words like: \n egg-gas-socket-temples-sun-... \n\n - You will have 3 lives and every 10 correct answers, you will get 1 extra more live \n\n - If your lives lesser than 1, you will lose the game \n\n - I may lose the game, but It is very hard for you to defeat me. Try your best!",
+        text: `- Concatenating words like:
+         egg-gas-socket-temples-sun-... 
+         
+         - You will have 3 lives and every 10 correct answers, you will get 1 extra more live 
+         
+         - If your lives lesser than 1, you will lose the game 
+         
+         - You can save the game, with the arrow button for later playing. Try your best!`,
         icon: "success",
         button: "Aww yiss!",
     });
