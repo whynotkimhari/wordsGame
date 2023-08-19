@@ -5,6 +5,7 @@ const livesEl = document.querySelector('#lives');
 const pointsEl = document.querySelector('#points');
 const helpEl = document.querySelector('#help');
 const rankEl = document.querySelector('#rank');
+const outEl = document.querySelector('#out');
 
 /// AUDIO VARIABLES
 const passAudio = new Audio('mp3/pass.mp3');
@@ -30,6 +31,12 @@ const api = 'https://retoolapi.dev/pypiCl/data';
 
 ///
 var inputName;
+var point = 0;
+var lives = 3;
+var usedWord = [];
+var lastGiven = "";
+var cntXtra = 0;
+
 
 //  MAIN
 main();
@@ -48,10 +55,10 @@ function getPlayerName() {
         buttons: ['Anonymous', 'OK']
     })
         .then(text => {
-            if(text)
+            if (text)
                 inputName = text;
         })
-} 
+}
 
 // FUNCTION TO PLAY AUDIO
 function playAudio(audio) {
@@ -59,6 +66,38 @@ function playAudio(audio) {
     audio.currentTime = 0;
     audio.play();
 }
+
+// Out
+outEl.addEventListener('click', () => {
+    swal({
+        title: "Are you sure?",
+        icon: "warning",
+        text: "Leave your game and save",
+        buttons: true,
+        dangerMode: true,
+    })
+        .then((willDelete) => {
+            if (willDelete) {
+                if (inputName && point) {
+                    fetch(api, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: inputName,
+                            content: point
+                        })
+                    })
+                        .then(() => {
+                            window.close();
+                        })
+
+                }
+                else window.close();
+            }
+        });
+})
 
 // RANKING HANDLER
 rankEl.addEventListener('click', () => {
@@ -74,7 +113,7 @@ rankEl.addEventListener('click', () => {
                 .sort((a, b) => b.point - a.point)
                 .slice(0, 10)
                 .reduce((str, element) => {
-                    if(element.name && element.point)
+                    if (element.name && element.point)
                         return str + `${element.name}: ${element.point} pts\n`;
 
                     else return str;
@@ -136,11 +175,6 @@ function endGameNotifier() {
 
 /// MAIN LOGIC GAME
 function run(dictionary) {
-    var point = 0;
-    var lives = 3;
-    var usedWord = [];
-    var lastGiven = "";
-    var cntXtra = 0;
 
     livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
     pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
@@ -153,7 +187,7 @@ function run(dictionary) {
         // If the input word is exist in the dictionary
         if (dictionary[inputWord[0]] === undefined) {
             answerEl.innerHTML = `<h1><span class="word">${inputWord}</span> does not exist in this dictionary</h1>`;
-            if(lastGiven) {
+            if (lastGiven) {
                 answerEl.innerHTML += `<h1>Try others to defeat <span class="word">${lastGiven}</span></h1>`;
             }
             lives--;
@@ -222,7 +256,7 @@ function run(dictionary) {
         }
 
         if (!lives) {
-            if(inputName && point) {
+            if (inputName && point) {
                 fetch(api, {
                     method: 'POST',
                     headers: {
@@ -234,14 +268,14 @@ function run(dictionary) {
                     })
                 });
             }
-            
+
             endGameNotifier();
         }
 
         livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
         pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
 
-        if(reward[point] === 0) {
+        if (reward[point] === 0) {
             reward[point]++;
             swal({
                 icon: "success",

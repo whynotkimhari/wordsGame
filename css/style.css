@@ -68,7 +68,8 @@ body {
 }
 
 #help,
-#rank {
+#rank,
+#out {
   cursor: pointer;
 }
 
