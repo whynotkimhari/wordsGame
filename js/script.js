@@ -1,4 +1,3 @@
-
 /// ELEMENT VARIABLES
 const inputEl = document.querySelector('#input');
 const answerEl = document.querySelector('#answer');
@@ -12,13 +11,47 @@ const passAudio = new Audio('mp3/pass.mp3');
 const wrongAudio = new Audio('mp3/wrong.mp3');
 const victoryAudio = new Audio('mp3/victory.mp3');
 
+// REWARD
+const reward = {
+    20: 0,
+    40: 0,
+    60: 0,
+    80: 0,
+    100: 0,
+    200: 0,
+    400: 0,
+    600: 0,
+    800: 0,
+    1000: 0
+}
+
+/// API
+const api = 'https://retoolapi.dev/pypiCl/data';
+
+///
+var inputName;
+
 //  MAIN
 main();
 function main() {
     render();
+    getPlayerName();
     handleFetchLib(run);
     setInterval(render, 4500);
 }
+
+// FUNCTION TO GET PLAYER NAME
+function getPlayerName() {
+    swal({
+        text: 'Enter your name to save your records',
+        content: "input",
+        buttons: ['Anonymous', 'OK']
+    })
+        .then(text => {
+            if(text)
+                inputName = text;
+        })
+} 
 
 // FUNCTION TO PLAY AUDIO
 function playAudio(audio) {
@@ -29,23 +62,26 @@ function playAudio(audio) {
 
 // RANKING HANDLER
 rankEl.addEventListener('click', () => {
-    fetch('json/db.json')
+    fetch(api)
         .then(res => res.json())
         .then((array) => {
-            // console.log(typeof array, array)
-            var resultText = array.rankings.map((val) => {
+            var resultText = array.map((val) => {
                 return {
                     name: val.name,
                     point: val.content
                 }
             })
                 .sort((a, b) => b.point - a.point)
+                .slice(0, 10)
                 .reduce((str, element) => {
-                    return str + `${element.name}: ${element.point} pts\n`;
+                    if(element.name && element.point)
+                        return str + `${element.name}: ${element.point} pts\n`;
+
+                    else return str;
                 }, "")
 
             swal({
-                title: "Fake Ranking",
+                title: "Ranking",
                 text: resultText
             })
         })
@@ -55,7 +91,7 @@ rankEl.addEventListener('click', () => {
 helpEl.addEventListener('click', () => {
     swal({
         title: "How to play?",
-        text: "- Concatenating words like: \n egg-gas-socket-temples-sun-... \n\n - You will have 10 lives and every 10 correct answers, you will get 1 extra more live \n\n - If your lives lesser than 1, you will lose the game \n\n - I may lose the game, but It is very hard for you to defeat me. Try your best!",
+        text: "- Concatenating words like: \n egg-gas-socket-temples-sun-... \n\n - You will have 3 lives and every 10 correct answers, you will get 1 extra more live \n\n - If your lives lesser than 1, you will lose the game \n\n - I may lose the game, but It is very hard for you to defeat me. Try your best!",
         icon: "success",
         button: "Aww yiss!",
     });
@@ -101,7 +137,7 @@ function endGameNotifier() {
 /// MAIN LOGIC GAME
 function run(dictionary) {
     var point = 0;
-    var lives = 10;
+    var lives = 3;
     var usedWord = [];
     var lastGiven = "";
     var cntXtra = 0;
@@ -148,6 +184,7 @@ function run(dictionary) {
                             lives++;
                             cntXtra = 0;
                         }
+
                         usedWord.push(inputWord);
                         let times = 0;
 
@@ -185,11 +222,34 @@ function run(dictionary) {
         }
 
         if (!lives) {
+            if(inputName && point) {
+                fetch(api, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: inputName,
+                        content: point
+                    })
+                });
+            }
+            
             endGameNotifier();
         }
 
         livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
         pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
+
+        if(reward[point] === 0) {
+            reward[point]++;
+            swal({
+                icon: "success",
+                title: "Congrats!",
+                text: "You got " + point + " points! Keep tryin'",
+                button: "Cool!",
+            })
+        }
     })
 }
 
