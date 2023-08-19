@@ -28,14 +28,15 @@ const reward = {
 
 /// API
 const api = 'https://retoolapi.dev/pypiCl/data';
+let userApiID = '';
 
 ///
 var inputName;
-var point = 0;
-var lives = 3;
-var usedWord = [];
-var lastGiven = "";
-var cntXtra = 0;
+var point = '';
+var lives = '';
+var usedWord;
+var lastGiven;
+var cntXtra;
 
 
 //  MAIN
@@ -57,6 +58,37 @@ function getPlayerName() {
         .then(text => {
             if (text)
                 inputName = text;
+
+            fetch(api)
+                .then(response => response.json())
+                .then(array => {
+                    let isExisted = false;
+                    for (let i = 0; i < array.length; i++) {
+                        if (array[i].name === inputName) {
+                            isExisted = true;
+                            point = array[i].content;
+                            lives = array[i].lives;
+                            usedWord = array[i].usedWord;
+                            lastGiven = array[i].lastGiven;
+                            cntXtra = array[i].counters;
+                            userApiID = array[i].id;
+                            break;
+                        }
+                    }
+
+                    if (!isExisted) {
+                        point = 0;
+                        lives = 3;
+                        usedWord = [];
+                        lastGiven = "";
+                        cntXtra = 0;
+                    }
+
+                    if (lastGiven) {
+                        answerEl.innerHTML = `<h1><span class="word">${lastGiven}</span> was my last given word</h1>`
+                    }
+                    renderLivesPoints();
+                })
         })
 }
 
@@ -67,28 +99,20 @@ function playAudio(audio) {
     audio.play();
 }
 
-// Out
+// FUNCTION TO OUT GAME AND SAVE, IF ANY
 outEl.addEventListener('click', () => {
     swal({
         title: "Are you sure?",
         icon: "warning",
         text: "Leave your game and save",
-        buttons: true,
+        buttons: ['Just save', 'Save and Quit'],
         dangerMode: true,
     })
         .then((willDelete) => {
+            console.log(willDelete)
             if (willDelete) {
                 if (inputName && point) {
-                    fetch(api, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: inputName,
-                            content: point
-                        })
-                    })
+                    saveData()
                         .then(() => {
                             window.close();
                         })
@@ -96,8 +120,49 @@ outEl.addEventListener('click', () => {
                 }
                 else window.close();
             }
+
+            else {
+                if (inputName && point) saveData();
+            }
         });
 })
+
+// FUNCTION TO SAVE DATA
+async function saveData() {
+    if (!userApiID) {
+        return fetch(api, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: inputName,
+                content: point,
+                lives: lives,
+                usedWord: usedWord,
+                lastGiven: lastGiven,
+                counters: cntXtra
+            })
+        })
+    }
+    else {
+        return fetch(api + '/' + userApiID, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: inputName,
+                content: point,
+                lives: lives,
+                usedWord: usedWord,
+                lastGiven: lastGiven,
+                counters: cntXtra
+            })
+        })
+    }
+
+}
 
 // RANKING HANDLER
 rankEl.addEventListener('click', () => {
@@ -173,11 +238,16 @@ function endGameNotifier() {
         });
 }
 
+/// RENDER LIVES AND POINTS
+function renderLivesPoints() {
+    livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
+    pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
+}
+
 /// MAIN LOGIC GAME
 function run(dictionary) {
 
-    livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
-    pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
+    renderLivesPoints();
 
     inputEl.addEventListener('change', (e) => {
         var inputWord = e.target.value.toLowerCase().trim();
@@ -257,16 +327,7 @@ function run(dictionary) {
 
         if (!lives) {
             if (inputName && point) {
-                fetch(api, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: inputName,
-                        content: point
-                    })
-                });
+                saveData();
             }
 
             endGameNotifier();
