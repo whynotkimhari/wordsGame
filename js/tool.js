@@ -51,7 +51,8 @@ export async function saveData(inputName, point, lives, usedWord, lastGiven, cnt
                 lives: lives,
                 usedWord: usedWord,
                 lastGiven: lastGiven,
-                counters: cntXtra
+                counters: cntXtra,
+                password: pass
             })
         })
     }

@@ -36,7 +36,7 @@ const reward = {
 
 /// API
 const api = 'https://retoolapi.dev/pypiCl/data';
-let userApiID = '';
+let userApiID = 0;
 
 ///
 var inputName,
@@ -126,6 +126,7 @@ function initNewPlayer(password) {
     cntXtra = 0;
     pass = password;
 }
+
 
 // FUNCTION TO OUT GAME AND SAVE, IF ANY
 outEl.addEventListener('click', () => {
@@ -283,7 +284,13 @@ function run(dictionary) {
             }
         }
         
-        if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api);
+        if (inputName && point) 
+            saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
+                .then(rs => rs.json())
+                .then(val => {
+                    userApiID = val.id;
+                });
+
         if (!lives) endGameNotifier();
 
         livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
