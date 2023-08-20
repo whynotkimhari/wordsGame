@@ -1,4 +1,5 @@
 # wordsGame
+
 Let's concatenate words
 
 - can save the game, if you want to continue playing your last, just type exact name of yours

@@ -1,3 +1,11 @@
+import { 
+    render, 
+    playAudio, 
+    saveData, 
+    handleFetchLib,
+    endGameNotifier
+} from '../js/tool.js';
+
 /// ELEMENT VARIABLES
 const inputEl = document.querySelector('#input');
 const answerEl = document.querySelector('#answer');
@@ -31,72 +39,92 @@ const api = 'https://retoolapi.dev/pypiCl/data';
 let userApiID = '';
 
 ///
-var inputName;
-var point = '';
-var lives = '';
-var usedWord;
-var lastGiven;
-var cntXtra;
-
+var inputName,
+    point = '',
+    lives = '',
+    usedWord,
+    lastGiven,
+    cntXtra,
+    pass = '';
 
 //  MAIN
 main();
 function main() {
     render();
-    getPlayerName();
+    handlePlayerName();
     handleFetchLib(run);
     setInterval(render, 4500);
 }
 
 // FUNCTION TO GET PLAYER NAME
-function getPlayerName() {
+function handlePlayerName() {
     swal({
         text: 'Enter your name to save your records',
         content: "input",
         buttons: ['Anonymous', 'OK']
     })
         .then(text => {
-            if (text)
+            if (text) {
                 inputName = text;
 
-            fetch(api)
-                .then(response => response.json())
-                .then(array => {
-                    let isExisted = false;
-                    for (let i = 0; i < array.length; i++) {
-                        if (array[i].name === inputName) {
-                            isExisted = true;
-                            point = array[i].content;
-                            lives = array[i].lives;
-                            usedWord = array[i].usedWord;
-                            lastGiven = array[i].lastGiven;
-                            cntXtra = array[i].counters;
-                            userApiID = array[i].id;
-                            break;
-                        }
-                    }
-
-                    if (!isExisted) {
-                        point = 0;
-                        lives = 3;
-                        usedWord = [];
-                        lastGiven = "";
-                        cntXtra = 0;
-                    }
-
-                    if (lastGiven) {
-                        answerEl.innerHTML = `<h1><span class="word">${lastGiven}</span> was my last given word</h1>`
-                    }
-                    renderLivesPoints();
+                swal({
+                    text: 'Enter/Create your password',
+                    content: "input",
+                    buttons: 'OK'
                 })
+                    .then(password => {
+
+                        if(password)
+                            fetch(api)
+                                .then(response => response.json())
+                                .then(array => {
+                                    let isExisted = false;
+                                    for (let i = 0; i < array.length; i++) {
+                                        if (array[i].name === inputName && array[i].password === password) {
+                                            isExisted = true;
+                                            point = array[i].content;
+                                            lives = array[i].lives;
+                                            usedWord = array[i].usedWord;
+                                            lastGiven = array[i].lastGiven;
+                                            cntXtra = array[i].counters;
+                                            userApiID = array[i].id;
+                                            pass = array[i].password;
+                                            break;
+                                        }
+
+                                        else if (array[i].name === inputName && array[i].password !== password) {
+                                            swal({
+                                                title: "Your password is incorrect",
+                                                icon: "warning",
+                                                buttons: 'OK',
+                                                dangerMode: true,
+                                            })
+                                                .then(() => location.reload())
+                                        }
+                                    }
+                
+                                    if (!isExisted) initNewPlayer(password);
+                
+                                    if (lastGiven) answerEl.innerHTML =
+                                        `<h1><span class="word">${lastGiven}</span> was my last given word</h1>`;
+                
+                                    renderLivesPoints();
+                                })
+
+                        else location.reload();
+                    })
+            }
         })
 }
 
-// FUNCTION TO PLAY AUDIO
-function playAudio(audio) {
-    audio.pause();
-    audio.currentTime = 0;
-    audio.play();
+// FUNCTION INIT NEW PLAYER
+function initNewPlayer(password) {
+    point = 0;
+    lives = 3;
+    usedWord = [];
+    lastGiven = "";
+    cntXtra = 0;
+    pass = password;
 }
 
 // FUNCTION TO OUT GAME AND SAVE, IF ANY
@@ -108,61 +136,22 @@ outEl.addEventListener('click', () => {
         buttons: ['Just save', 'Save and Quit'],
         dangerMode: true,
     })
-        .then((willDelete) => {
-            console.log(willDelete)
-            if (willDelete) {
+        .then((isExit) => {
+            console.log(isExit)
+            if (isExit) {
                 if (inputName && point) {
-                    saveData()
-                        .then(() => {
-                            window.close();
-                        })
+                    saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass)
+                        .then(window.close);
 
                 }
                 else window.close();
             }
 
             else {
-                if (inputName && point) saveData();
+                if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass);
             }
         });
 })
-
-// FUNCTION TO SAVE DATA
-async function saveData() {
-    if (!userApiID) {
-        return fetch(api, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: inputName,
-                content: point,
-                lives: lives,
-                usedWord: usedWord,
-                lastGiven: lastGiven,
-                counters: cntXtra
-            })
-        })
-    }
-    else {
-        return fetch(api + '/' + userApiID, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: inputName,
-                content: point,
-                lives: lives,
-                usedWord: usedWord,
-                lastGiven: lastGiven,
-                counters: cntXtra
-            })
-        })
-    }
-
-}
 
 // RANKING HANDLER
 rankEl.addEventListener('click', () => {
@@ -202,48 +191,11 @@ helpEl.addEventListener('click', () => {
          
          - If your lives lesser than 1, you will lose the game 
          
-         - You can save the game, with the arrow button for later playing. Try your best!`,
+         - You can save the game, with the arrow button for later playing or let the game save it for you!`,
         icon: "success",
         button: "Aww yiss!",
     });
 })
-
-/// FETCH JSON LIB
-async function handleFetchLib(callBack) {
-    fetch('json/words.json')
-        .then(res => res.json())
-        .then(callBack)
-}
-
-/// END GAME NOTIFIER
-function endGameNotifier() {
-    swal("You lost! Restart the game to play again", {
-        buttons: ["Oh noez! I'm out", "Yezz sirrr!"]
-    })
-        .then((restart) => {
-            if (restart) {
-                swal("Poof! Your game has been restarted!", {
-                    icon: "success",
-                });
-                location.reload();
-            }
-            else {
-                swal({
-                    title: "Are you sure?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            window.close();
-                        } else {
-                            location.reload();
-                        }
-                    });
-            }
-        });
-}
 
 /// RENDER LIVES AND POINTS
 function renderLivesPoints() {
@@ -332,13 +284,8 @@ function run(dictionary) {
             }
         }
 
-        if (!lives) {
-            if (inputName && point) {
-                saveData();
-            }
-
-            endGameNotifier();
-        }
+        if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass);
+        if (!lives) endGameNotifier();
 
         livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;
         pointsEl.innerHTML = `<i class='bx bx-plus-medical'></i> ${point}`;
@@ -355,17 +302,3 @@ function run(dictionary) {
     })
 }
 
-/// WORDS GAME TEXT ANIMATION
-async function changeColor(element, color) {
-    element.style.color = color;
-    await new Promise(resolve => setTimeout(resolve, 500));
-    element.style.color = 'black';
-}
-
-async function render() {
-    const elements = document.querySelectorAll('.title-sec span')
-
-    for (const element of elements) {
-        await changeColor(element, 'yellow');
-    }
-}
