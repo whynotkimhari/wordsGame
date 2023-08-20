@@ -137,10 +137,9 @@ outEl.addEventListener('click', () => {
         dangerMode: true,
     })
         .then((isExit) => {
-            console.log(isExit)
             if (isExit) {
                 if (inputName && point) {
-                    saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass)
+                    saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
                         .then(window.close);
 
                 }
@@ -148,7 +147,7 @@ outEl.addEventListener('click', () => {
             }
 
             else {
-                if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass);
+                if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api);
             }
         });
 })
@@ -283,8 +282,8 @@ function run(dictionary) {
                 }
             }
         }
-
-        if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass);
+        
+        if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api);
         if (!lives) endGameNotifier();
 
         livesEl.innerHTML = `<i class='bx bxs-heart'></i> ${lives}`;

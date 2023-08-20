@@ -21,7 +21,7 @@ export function playAudio(audio) {
 }
 
 // FUNCTION TO SAVE DATA
-export async function saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass) {
+export async function saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api) {
     if (!userApiID) {
         return fetch(api, {
             method: 'POST',
