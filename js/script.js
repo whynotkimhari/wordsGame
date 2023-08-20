@@ -1,7 +1,7 @@
-import { 
-    render, 
-    playAudio, 
-    saveData, 
+import {
+    render,
+    playAudio,
+    saveData,
     handleFetchLib,
     endGameNotifier
 } from '../js/tool.js';
@@ -74,7 +74,7 @@ function handlePlayerName() {
                 })
                     .then(password => {
 
-                        if(password)
+                        if (password)
                             fetch(api)
                                 .then(response => response.json())
                                 .then(array => {
@@ -102,13 +102,23 @@ function handlePlayerName() {
                                                 .then(() => location.reload())
                                         }
                                     }
-                
+
                                     if (!isExisted) initNewPlayer(password);
-                
+
                                     if (lastGiven) answerEl.innerHTML =
                                         `<h1><span class="word">${lastGiven}</span> was my last given word</h1>`;
-                
+
                                     renderLivesPoints();
+                                })
+                                .catch(err => {
+                                    swal({
+                                        title: "This page may meet some bugs! Please come later!",
+                                        icon: "warning",
+                                        text: '404',
+                                        buttons: 'I got it!',
+                                        dangerMode: true,
+                                    })
+                                        .then(() => window.close())
                                 })
 
                         else location.reload();
@@ -142,7 +152,6 @@ outEl.addEventListener('click', () => {
                 if (inputName && point) {
                     saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
                         .then(window.close);
-
                 }
                 else window.close();
             }
@@ -283,8 +292,8 @@ function run(dictionary) {
                 }
             }
         }
-        
-        if (inputName && point) 
+
+        if (inputName && point)
             saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
                 .then(rs => rs.json())
                 .then(val => {
