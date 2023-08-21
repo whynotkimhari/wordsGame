@@ -3,7 +3,7 @@ import {
     playAudio,
     saveData,
     handleFetchLib,
-    endGameNotifier
+    endGameNotifier,
 } from '../js/tool.js';
 
 /// ELEMENT VARIABLES
@@ -47,6 +47,8 @@ var inputName,
     cntXtra,
     pass = '';
 
+let isAdmin = false;
+
 //  MAIN
 main();
 function main() {
@@ -66,6 +68,7 @@ function handlePlayerName() {
         .then(text => {
             if (text) {
                 inputName = text;
+                if (inputName === 'admin') isAdmin = true;
 
                 swal({
                     text: 'Enter/Create your password',
@@ -170,21 +173,23 @@ rankEl.addEventListener('click', () => {
             var resultText = array.map((val) => {
                 return {
                     name: val.name,
-                    point: val.content
+                    point: val.content,
+                    id: val.id
                 }
             })
                 .sort((a, b) => b.point - a.point)
                 .slice(0, 10)
                 .reduce((str, element) => {
-                    if (element.name && element.point)
-                        return str + `${element.name}: ${element.point} pts\n`;
+                    if (element.name && element.point) {
+                        if (isAdmin) return str + `<div class="title-admin">${element.name}: ${element.point} pts <button onclick="deleteUser(${element.id}, '${api}')">X</button></div>`
+                        else return str + `<div class="title-user"><span class="element-name">${element.name}:</span> <span class="element-pts">${element.point} pts</span></div>`;
+                    }
 
                     else return str;
                 }, "")
-
-            swal({
+            Swal.fire({
                 title: "Ranking",
-                text: resultText
+                html: resultText
             })
         })
 })
@@ -218,8 +223,9 @@ function run(dictionary) {
     renderLivesPoints();
 
     inputEl.addEventListener('change', (e) => {
-        var inputWord = e.target.value.toLowerCase().trim();
-        var lastPos = inputWord.length - 1;
+        let inputWord = e.target.value.toLowerCase().trim(),
+            lastPos = inputWord.length - 1;
+
         e.target.value = "";
 
         // If the input word is exist in the dictionary
@@ -258,9 +264,9 @@ function run(dictionary) {
                         }
 
                         usedWord.push(inputWord);
-                        let times = 0;
 
-                        var givenBackWord = dictionary[inputWord[lastPos]][Math.floor(Math.random() * dictionary[inputWord[lastPos]].length)];
+                        let times = 0,
+                            givenBackWord = dictionary[inputWord[lastPos]][Math.floor(Math.random() * dictionary[inputWord[lastPos]].length)];
 
                         while (usedWord.indexOf(givenBackWord) !== -1 || givenBackWord === inputWord) {
                             givenBackWord = dictionary[inputWord[lastPos]][Math.floor(Math.random() * dictionary[inputWord[lastPos]].length)];
