@@ -63,7 +63,7 @@ function handlePlayerName() {
     swal({
         text: 'Enter your name to save your records',
         content: "input",
-        buttons: ['Anonymous', 'OK']
+        buttons: 'OK'
     })
         .then(text => {
             if (text) {
@@ -127,6 +127,7 @@ function handlePlayerName() {
                         else location.reload();
                     })
             }
+            else location.reload();
         })
 }
 
