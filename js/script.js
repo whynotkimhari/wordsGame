@@ -20,6 +20,56 @@ const passAudio = new Audio('mp3/pass.mp3');
 const wrongAudio = new Audio('mp3/wrong.mp3');
 const victoryAudio = new Audio('mp3/victory.mp3');
 
+// CONST MESSAGES
+const inputNameMsg = {
+    text: 'Enter your name to save your records',
+    content: "input",
+    buttons: 'OK'
+}
+
+const inputPasswordMsg= {
+    text: 'Enter/Create your password',
+    content: "input",
+    buttons: 'OK'
+}
+
+const incorrectPasswordMsg = {
+    title: "Your password is incorrect",
+    icon: "warning",
+    buttons: 'OK',
+    dangerMode: true,
+}
+
+const unknownErrorMsg = {
+    title: "This page may meet some bugs! Please come later!",
+    icon: "warning",
+    text: '404',
+    buttons: 'I got it!',
+    dangerMode: true,
+}
+
+const outGameMsg = {
+    title: "Are you sure?",
+    icon: "warning",
+    text: "Leave your game and save",
+    buttons: ['Just save', 'Save and Quit'],
+    dangerMode: true,
+}
+
+const helpMsg = {
+    title: "How to play?",
+    text: `- Concatenating words like:
+     egg-gas-socket-temples-sun-... 
+     
+     - You will have 3 lives and every 10 correct answers, you will get 1 extra more live 
+     
+     - If your lives lesser than 1, you will lose the game 
+     
+     - You can save the game, with the arrow button for later playing or let the game save it for you!`,
+    icon: "success",
+    button: "Aww yiss!",
+}
+
 // REWARD
 const reward = {
     20: 0,
@@ -74,75 +124,55 @@ function main() {
 
 // FUNCTION TO GET PLAYER NAME
 function handlePlayerName() {
-    swal({
-        text: 'Enter your name to save your records',
-        content: "input",
-        buttons: 'OK'
-    })
-        .then(text => {
-            if (text) {
-                inputName = text;
-                if (inputName === 'admin') isAdmin = true;
+    swal(inputNameMsg)
+    .then(text => {
+        if (text) {
+            inputName = text;
+            if (inputName === 'admin') isAdmin = true;
 
-                swal({
-                    text: 'Enter/Create your password',
-                    content: "input",
-                    buttons: 'OK'
-                })
-                    .then(password => {
+            swal(inputPasswordMsg)
+            .then(password => {
+                if (password)
+                    fetch(api)
+                    .then(response => response.json())
+                    .then(array => {
+                        let isExisted = false;
+                        for (let i = 0; i < array.length; i++) {
+                            if (array[i].name === inputName && array[i].password === password) {
+                                isExisted = true;
+                                point = array[i].content;
+                                lives = array[i].lives;
+                                usedWord = array[i].usedWord;
+                                lastGiven = array[i].lastGiven;
+                                cntXtra = array[i].counters;
+                                userApiID = array[i].id;
+                                pass = array[i].password;
+                                break;
+                            }
 
-                        if (password)
-                            fetch(api)
-                                .then(response => response.json())
-                                .then(array => {
-                                    let isExisted = false;
-                                    for (let i = 0; i < array.length; i++) {
-                                        if (array[i].name === inputName && array[i].password === password) {
-                                            isExisted = true;
-                                            point = array[i].content;
-                                            lives = array[i].lives;
-                                            usedWord = array[i].usedWord;
-                                            lastGiven = array[i].lastGiven;
-                                            cntXtra = array[i].counters;
-                                            userApiID = array[i].id;
-                                            pass = array[i].password;
-                                            break;
-                                        }
+                            else if (array[i].name === inputName && array[i].password !== password) {
+                                swal(incorrectPasswordMsg)
+                                .then(() => location.reload())
+                            }
+                        }
 
-                                        else if (array[i].name === inputName && array[i].password !== password) {
-                                            swal({
-                                                title: "Your password is incorrect",
-                                                icon: "warning",
-                                                buttons: 'OK',
-                                                dangerMode: true,
-                                            })
-                                                .then(() => location.reload())
-                                        }
-                                    }
+                        if (!isExisted) initNewPlayer(password);
 
-                                    if (!isExisted) initNewPlayer(password);
+                        if (lastGiven) answerEl.innerHTML =
+                            `<h1><span class="word">${lastGiven}</span> was my last given word</h1>`;
 
-                                    if (lastGiven) answerEl.innerHTML =
-                                        `<h1><span class="word">${lastGiven}</span> was my last given word</h1>`;
-
-                                    renderLivesPoints();
-                                })
-                                .catch(err => {
-                                    swal({
-                                        title: "This page may meet some bugs! Please come later!",
-                                        icon: "warning",
-                                        text: '404',
-                                        buttons: 'I got it!',
-                                        dangerMode: true,
-                                    })
-                                        .then(() => window.close())
-                                })
-
-                        else location.reload();
+                        renderLivesPoints();
                     })
-            }
-            else location.reload();
-        })
+                    .catch(err => {
+                        swal(unknownErrorMsg)
+                        .then(() => window.close())
+                    })
+
+                else location.reload();
+            })
+        }
+        else location.reload();
+    })
 }
 
 // FUNCTION INIT NEW PLAYER
@@ -158,73 +188,53 @@ function initNewPlayer(password) {
 
 // FUNCTION TO OUT GAME AND SAVE, IF ANY
 outEl.addEventListener('click', () => {
-    swal({
-        title: "Are you sure?",
-        icon: "warning",
-        text: "Leave your game and save",
-        buttons: ['Just save', 'Save and Quit'],
-        dangerMode: true,
-    })
-        .then((isExit) => {
-            if (isExit) {
-                if (inputName && point) {
-                    saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
-                        .then(window.close);
-                }
-                else window.close();
+    swal(outGameMsg)
+    .then((isExit) => {
+        if (isExit) {
+            if (inputName && point) {
+                saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
+                .then(window.close);
             }
+            else window.close();
+        }
 
-            else {
-                if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api);
-            }
-        });
+        else {
+            if (inputName && point) saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api);
+        }
+    });
 })
 
 // RANKING HANDLER
 rankEl.addEventListener('click', () => {
     fetch(api)
-        .then(res => res.json())
-        .then((array) => {
-            var resultText = array.map((val) => {
-                return {
-                    name: val.name,
-                    point: val.content,
-                    id: val.id
-                }
-            })
-                .sort((a, b) => b.point - a.point)
-                .slice(0, 10)
-                .reduce((str, element) => {
-                    if (element.name && element.point) {
-                        if (isAdmin) return str + `<div class="title-admin">${element.name}: ${element.point} pts <button onclick="deleteUser(${element.id}, '${api}')">X</button></div>`
-                        else return str + `<div class="title-user"><span class="element-name">${element.name}:</span> <span class="element-pts">${element.point} pts</span></div>`;
-                    }
-
-                    else return str;
-                }, "")
-            Swal.fire({
-                title: "Ranking",
-                html: resultText
-            })
+    .then(res => res.json())
+    .then((array) => {
+        var resultText = array.map((val) => {
+            return {
+                name: val.name,
+                point: val.content,
+                id: val.id
+            }
         })
+        .sort((a, b) => b.point - a.point)
+        .slice(0, 15)
+        .reduce((str, element) => {
+            if (element.name && element.point) {
+                if (isAdmin) return str + `<div class="title-admin">${element.name}: ${element.point} pts <button onclick="deleteUser(${element.id}, '${api}')">X</button></div>`
+                else return str + `<div class="title-user"><span class="element-name">${element.name}:</span> <span class="element-pts">${element.point} pts</span></div>`;
+            }
+
+            else return str;
+        }, "")
+        Swal.fire({
+            title: "Ranking",
+            html: resultText
+        })
+    })
 })
 
 // HELP HANDLER
-helpEl.addEventListener('click', () => {
-    swal({
-        title: "How to play?",
-        text: `- Concatenating words like:
-         egg-gas-socket-temples-sun-... 
-         
-         - You will have 3 lives and every 10 correct answers, you will get 1 extra more live 
-         
-         - If your lives lesser than 1, you will lose the game 
-         
-         - You can save the game, with the arrow button for later playing or let the game save it for you!`,
-        icon: "success",
-        button: "Aww yiss!",
-    });
-})
+helpEl.addEventListener('click', () => swal(helpMsg))
 
 /// RENDER LIVES AND POINTS
 function renderLivesPoints() {
@@ -246,9 +256,9 @@ function run(dictionary) {
         // If the input word is exist in the dictionary
         if (dictionary[inputWord[0]] === undefined) {
             answerEl.innerHTML = `<h1><span class="word">${inputWord}</span> does not exist in this dictionary</h1>`;
-            if (lastGiven) {
+            if (lastGiven) 
                 answerEl.innerHTML += `<h1>Try others to defeat <span class="word">${lastGiven}</span></h1>`;
-            }
+            
             lives--;
             playAudio(wrongAudio);
         }
@@ -316,10 +326,8 @@ function run(dictionary) {
 
         if (inputName && point)
             saveData(inputName, point, lives, usedWord, lastGiven, cntXtra, pass, userApiID, api)
-                .then(rs => rs.json())
-                .then(val => {
-                    userApiID = val.id;
-                });
+            .then(rs => rs.json())
+            .then(val => userApiID = val.id);
 
         if (!lives) endGameNotifier();
 

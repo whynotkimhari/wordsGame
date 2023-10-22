@@ -6,10 +6,10 @@ function deleteUser(userID, api) {
             'Content-Type': 'application/json',
         }
     })
-        .then(()  => {
-            fetch(api)
+    .then(()  => {
+        fetch(api)
         .then(res => res.json())
-        .then((array) => {
+        .then(array => {
             var resultText = array.map((val) => {
                 return {
                     name: val.name,
@@ -17,18 +17,18 @@ function deleteUser(userID, api) {
                     id: val.id
                 }
             })
-                .sort((a, b) => b.point - a.point)
-                .slice(0, 10)
-                .reduce((str, element) => {
-                    if (element.name && element.point) {
-                        return str + `<div class="title-admin">${element.name}: ${element.point} pts <button onclick="deleteUser(${element.id}, '${api}')">X</button></div>`
-                    }
-                    else return str;
-                }, "")
+            .sort((a, b) => b.point - a.point)
+            .slice(0, 10)
+            .reduce((str, element) => {
+                if (element.name && element.point) {
+                    return str + `<div class="title-admin">${element.name}: ${element.point} pts <button onclick="deleteUser(${element.id}, '${api}')">X</button></div>`
+                }
+                return str;
+            }, "")
             Swal.fire({
                 title: "Ranking",
                 html: resultText
             })
         })
-        })
+    })
 }

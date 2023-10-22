@@ -8,9 +8,7 @@ export async function changeColor(element, color) {
 export async function render() {
     const elements = document.querySelectorAll('.title-sec span')
 
-    for (const element of elements) {
-        await changeColor(element, 'yellow');
-    }
+    for (const element of elements) await changeColor(element, 'yellow');
 }
 
 // FUNCTION TO PLAY AUDIO
@@ -58,11 +56,19 @@ export async function saveData(inputName, point, lives, usedWord, lastGiven, cnt
     }
 }
 
+// CONSTANT MSGS
+const endGameMsg = {
+    title: "Are you sure?",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+}
+
 /// FETCH JSON LIB
 export async function handleFetchLib(callBack) {
     fetch('json/words.json')
-        .then(res => res.json())
-        .then(callBack)
+    .then(res => res.json())
+    .then(callBack)
 }
 
 /// END GAME NOTIFIER
@@ -70,24 +76,16 @@ export function endGameNotifier() {
     swal("You lost! Restart the game to play again", {
         buttons: ["Oh noez! I'm out", "Yezz sirrr!"]
     })
-        .then((restart) => {
-            if (restart) {
-                swal("Poof! Your game has been restarted!", {
-                    icon: "success",
-                });
-                location.reload();
-            }
-            else {
-                swal({
-                    title: "Are you sure?",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) window.close();
-                        else location.reload();
-                    });
-            }
-        });
+    .then((restart) => {
+        if (restart) {
+            swal("Poof! Your game has been restarted!", {
+                icon: "success",
+            });
+            location.reload();
+        }
+        else {
+            swal(endGameMsg)
+            .then(willDelete => willDelete ? window.close() : location.reload());
+        }
+    });
 }
