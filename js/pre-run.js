@@ -18,7 +18,7 @@ function deleteUser(userID, api) {
                 }
             })
             .sort((a, b) => b.point - a.point)
-            .slice(0, 10)
+            .slice(0, 15)
             .reduce((str, element) => {
                 if (element.name && element.point) {
                     return str + `<div class="title-admin">${element.name}: ${element.point} pts <button onclick="deleteUser(${element.id}, '${api}')">X</button></div>`
